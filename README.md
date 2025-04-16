@@ -8,7 +8,10 @@ We extract a real road network using **OSMnx**, engineer graph-based features, a
 
 ## Folder Structure
 
-<pre> GNN-road-importance/ ├── dhanmondi_test/ # Small-scale prototype ├── dhaka_full/ # Full Dhaka road network (~250k edges) └── README.md # You're here! </pre>
+GNN-road-importance/
+├── dhanmondi_test/      # Small-scale prototype
+├── dhaka_full/          # Full Dhaka road network (~250k edges)
+└── README.md            # Project overview and documentation
 
 
 ---
@@ -28,16 +31,16 @@ We extract a real road network using **OSMnx**, engineer graph-based features, a
 
 | Step               | Description |
 |--------------------|-------------|
-| 📥 Graph Download   | Retrieve road network using OSMnx |
-| 🏷️ Labeling         | Assign 4-class importance from `highway` tag |
-| 📐 Feature Engineering | Compute edge `length` and `betweenness centrality` |
-| 🔁 PyG Conversion   | Convert NetworkX graph to PyTorch Geometric |
-| 🧠 Model Training   | Train MLP model to classify road importance |
-| ⚖️ Class Balancing  | Use weighted loss to improve rare class prediction |
+| Graph Download   | Retrieve road network using OSMnx |
+| Labeling         | Assign 4-class importance from `highway` tag |
+| Feature Engineering | Compute edge `length` and `betweenness centrality` |
+| PyG Conversion   | Convert NetworkX graph to PyTorch Geometric |
+| Model Training   | Train MLP model to classify road importance |
+| Class Balancing  | Use weighted loss to improve rare class prediction |
 
 ---
 
-## 🗺️ Folder Overview
+## Folder Overview
 
 - `dhanmondi_test/`: Prototype using a small subgraph (~2k edges)
 - `dhaka_full/`: Full-scale Dhaka road network (~250k edges, 100k nodes)
@@ -52,7 +55,7 @@ Each folder includes:
 
 ---
 
-## 📊 Sample Results (Full Dhaka)
+## Sample Results (Full Dhaka)
 
 | Class | Meaning                    | F1-Score (Baseline) | F1-Score (Weighted) |
 |-------|----------------------------|----------------------|---------------------|
@@ -63,7 +66,7 @@ Each folder includes:
 
 ---
 
-## 🚀 Future Work
+## Future Work
 
 - Use GCN, GraphSAGE, or GAT architectures
 - Normalize features and expand input dimensions
