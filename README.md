@@ -74,3 +74,5 @@ Each folder includes:
 - Add road curvature, degree centrality, or clustering coefficient
 - Use satellite or traffic data for richer features
 - Generalize to Bangladesh-wide road network
+
+**Note**: Due to file size limits, this repo does not include raw or processed `.graphml` files.  
