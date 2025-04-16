@@ -2,7 +2,7 @@
 
 This project predicts the relative **importance of road segments** in the urban road network of **Dhaka, Bangladesh** using a Graph Neural Network (GNN) pipeline.
 
-We extract a real road network using **OSMnx**, engineer graph-based features, assign multi-class importance labels using OpenStreetMap `highway` tags, and train a GNN (MLP baseline) using **PyTorch Geometric**.
+A real road network was extracted using **OSMnx**, engineer graph-based features, assign multi-class importance labels using OpenStreetMap `highway` tags, and train a GNN (MLP baseline) using **PyTorch Geometric**.
 
 ---
 
