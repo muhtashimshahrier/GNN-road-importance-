@@ -64,6 +64,7 @@ Each folder includes:
 | `2`   | Primary roads              | 0.00                 | 0.00                |
 | `3`   | Trunk/Motorway             | 0.00                 | 0.07                |
 
+*Due to extreme class imbalance in real-world OSM tags, the baseline model was biased toward the majority class (`residential`). After applying class-weighted loss, the model began to learn patterns for rare classes like secondary and trunk roads. Performance can be further improved with feature scaling, better GNN architectures, and richer input features.*
 ---
 
 ## Future Work
