@@ -2,17 +2,24 @@
 
 This project predicts the relative **importance of road segments** in the urban road network of **Dhaka, Bangladesh** using a Graph Neural Network (GNN) pipeline.
 
-A real road network was extracted using **OSMnx**, engineer graph-based features, assign multi-class importance labels using OpenStreetMap `highway` tags, and train a GNN (MLP baseline) using **PyTorch Geometric**.
+A real road network was extracted using **OSMnx**, then processed through a full pipeline:
+
+- **Feature Engineering**: Computed edge-level features like `length` and `betweenness centrality`.
+- **Edge Labeling**: Assigned multi-class importance labels using OpenStreetMap `highway` tags.
+- **Graph Conversion**: Transformed the graph into **PyTorch Geometric** format (`edge_index`, `edge_attr`, `edge_labels`).
+- **Model Training**:
+  - Trained a baseline **MLP** using edge features only (no message passing).
+  - Trained a **Graph Convolutional Network (GCN)** using `GCNConv` layers to leverage structural information in the graph.
+
+This pipeline was applied to both a small subgraph (Dhanmondi, MLP only) and the full Dhaka city network (~250k edges).
 
 ---
 
 ## Folder Structure
-
 GNN-road-importance/
-├── dhanmondi_test/      # Small-scale prototype
-├── dhaka_full/          # Full Dhaka road network (~250k edges)
-└── README.md            # Project overview and documentation
-
+├── dhanmondi_test/     # Small-scale prototype
+├── dhaka_full/         # Full Dhaka road network (~250k edges)
+└── README.md           # Project overview and documentation
 
 ---
 
@@ -29,14 +36,14 @@ GNN-road-importance/
 
 ## What This Project Does
 
-| Step               | Description |
-|--------------------|-------------|
-| Graph Download   | Retrieve road network using OSMnx |
-| Labeling         | Assign 4-class importance from `highway` tag |
-| Feature Engineering | Compute edge `length` and `betweenness centrality` |
-| PyG Conversion   | Convert NetworkX graph to PyTorch Geometric |
-| Model Training   | Train MLP model to classify road importance |
-| Class Balancing  | Use weighted loss to improve rare class prediction |
+| Step                 | Description |
+|----------------------|-------------|
+| Graph Download       | Retrieve road network using OSMnx |
+| Edge Labeling        | Assign 4-class importance from OSM `highway` tags |
+| Feature Engineering  | Compute edge `length` and `betweenness centrality` |
+| PyG Conversion       | Convert NetworkX graph to PyTorch Geometric |
+| Model Training       | Train MLP and GCN models to classify edge importance |
+| Class Balancing      | Apply class-weighted loss to improve rare class recall |
 
 ---
 
@@ -52,27 +59,37 @@ Each folder includes:
 - `convert_to_pyg.py`
 - `train_gnn_baseline.py`
 - `train_gnn_weighted.py` (Only for Full Dhaka)
+- `train_gnn_gcn.py` (Only for Full Dhaka)
 
 ---
 
-## Sample Results (Full Dhaka)
+## Model Performance Comparison (Full Dhaka)
 
-| Class | Meaning                    | F1-Score (Baseline) | F1-Score (Weighted) |
-|-------|----------------------------|----------------------|---------------------|
-| `0`   | Local roads (residential)  | 0.89                 | 0.50                |
-| `1`   | Secondary/Tertiary roads   | 0.08                 | 0.20                |
-| `2`   | Primary roads              | 0.00                 | 0.00                |
-| `3`   | Trunk/Motorway             | 0.00                 | 0.07                |
+| Model                | Accuracy | Macro F1 | Notes                                               |
+|---------------------|----------|----------|-----------------------------------------------------|
+| MLP (Vanilla)       | 0.81     | 0.24     | Overfit to dominant class; poor generalization      |
+| MLP (Class-weighted)| 0.35     | 0.19     | Improved minority class recall; lower overall acc.  |
+| GCN (GCNConv)       | 0.61     | 0.25     | Balanced performance; better structural learning    |
 
-*Due to extreme class imbalance in real-world OSM tags, the baseline model was biased toward the majority class (`residential`). After applying class-weighted loss, the model began to learn patterns for rare classes like secondary and trunk roads. Performance can be further improved with feature scaling, better GNN architectures, and richer input features.*
+---
+
+## Interpretation
+
+The baseline MLP achieved high accuracy by favoring the dominant class (`residential`), but failed to generalize to minority classes. Class-weighted loss improved recall for rare classes but significantly reduced overall accuracy due to the lack of structural awareness. In contrast, the GCN model **leveraged road network connectivity** to boost recall and F1 for underrepresented classes — achieving a more balanced performance. This demonstrates the value of graph-based architectures in learning from real-world spatial networks with extreme class imbalance.
+
 ---
 
 ## Future Work
 
-- Use GCN, GraphSAGE, or GAT architectures
-- Normalize features and expand input dimensions
-- Add road curvature, degree centrality, or clustering coefficient
-- Use satellite or traffic data for richer features
-- Generalize to Bangladesh-wide road network
+- Extend to more advanced GNNs like GraphSAGE, GAT, or edge-conditioned convolutions  
+- Scale up feature space with normalization, interaction terms, or richer topological descriptors  
+- Incorporate geometric features like curvature, angular deviation, and clustering coefficient  
+- Integrate external data sources (e.g., satellite imagery, traffic counts, land use) for multimodal learning  
+- Generalize the pipeline to a Bangladesh-wide road network and test region-specific transferability  
+- Explore self-supervised or contrastive learning for pretraining on unlabeled networks
 
-**Note**: Due to file size limits, this repo does not include raw or processed `.graphml` files.  
+---
+
+**Note**: Due to file size limits, this repo does not include raw or processed `.graphml` files.
+
+
